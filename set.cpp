@@ -19,7 +19,7 @@ List::List(const List& L)
 {
 	head = 0;
 	tail = 0;
-	for (Iterator i = Iterator(L); !i.finished; ++i){
+	for (Iterator i = Iterator(L); !i.end(); ++i){
 		this->insert(i.get());
 	}
 }
@@ -78,6 +78,7 @@ void List::insert(const int x)
 		head->prev = q;
 		head = q;
 		return;
+		//return iter;}
 	}
 
 	// x needs to be inserted within the list
@@ -103,7 +104,8 @@ void List::insert(const int x)
 
 void List::print()const
 {
-	for (Iterator i = Iterator(*this); !i.finished; ++i){
+	std::cout << "List: ";
+	for (Iterator i = Iterator(*this); !i.end(); ++i){
 		std::cout << i.get() << " ";
 	}
 	std::cout << std::endl;
@@ -112,8 +114,6 @@ void List::print()const
 Iterator::Iterator(const List& L)
 {
 	iter = L.head;
-	if (iter) finished = false;
-	else finished = true;
 }
 
 int Iterator::get()const
@@ -122,14 +122,16 @@ int Iterator::get()const
 	return iter->data;
 }
 
-Node * Iterator::operator++()
+void Iterator::operator++()
 {
-	if (iter==0){
-		finished = true;
-		return iter;}
+	if (iter==0) return;
 	iter = iter->next;
-	if (iter==0) finished = true;
-	return iter;
+}
+
+bool Iterator::end()const
+{
+	if (iter==0) return true;
+	return false;
 }
 
 List list_union(const List& L1, const List& L2)
@@ -138,13 +140,13 @@ List list_union(const List& L1, const List& L2)
 	Iterator i1 = Iterator(L1);
 	Iterator i2 = Iterator(L2);
 
-	while (!i1.finished || !i2.finished){
-		if (i1.finished){
+	while (!i1.end() || !i2.end()){
+		if (i1.end()){
 			L.insert(i2.get());
 			++i2;
 			continue;
 		}
-		if (i2.finished){
+		if (i2.end()){
 			L.insert(i1.get());
 			++i1;
 			continue;
@@ -173,7 +175,7 @@ List list_union(const List& L1, const List& L2)
 bool compare(const List& L, const int * x)
 {
 	int j = 0;
-	for (Iterator i = Iterator(L); !i.finished; ++i,++j){
+	for (Iterator i = Iterator(L); !i.end(); ++i,++j){
 		if (i.get()!=x[j]){
 			IFDEBUG(std::cout << "Element " << j+1 << " was " << i.get() << ". Expected " << x[j] << std::endl)
 			return false;}
@@ -181,16 +183,28 @@ bool compare(const List& L, const int * x)
 	return true;
 }
 
+bool compare(const int * x, const List&L)
+{
+	return compare(L,x);
+}
+
 bool compare(const List& L1, const List& L2)
 {
 	Iterator i = Iterator(L1);
 	Iterator j = Iterator(L2);
-	while (!i.finished){
-		if (i.get()!=j.get()) return false;
+	while (!i.end()){
+		try{ if (i.get()!=j.get()){
+			IFDEBUG(std::cout << "Element was " << i.get() << ". Expected " << j.get() << std::endl)
+			return false;}}
+		catch (OutOfBounds& e){
+			IFDEBUG(std::cout << "Lists are not the same length" << std::endl)
+			return false;}
 		++i;
 		++j;
 	}
 
-	if (!j.finished) return false;
+	if (!j.end()){
+		IFDEBUG(std::cout << "Lists are not the same length" << std::endl)
+		return false;}
 	return true;
 }

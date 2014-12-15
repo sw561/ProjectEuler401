@@ -2,7 +2,6 @@
 #include <sstream>
 #include <cstdio>
 #include "set.h"
-#include "parameter.h"
 
 // Global variable used to toggle run-time debugging
 short unsigned int debug;
@@ -20,16 +19,14 @@ int main(int argc, char* argv[])
 	if (argc>=3) std::istringstream(argv[2]) >> debug;
 	else debug = 0;
 
-	// Parameter file
-	if (argc>=4) Parameter::inst(argv[3]);
+//	// Parameter file
+//	if (argc>=4) Parameter::inst(argv[3]);
 //--------------------------------------------------//
 	
 	// Your program:
-	const Parameter * param = Parameter::inst();
-
 	List q = List();
-	q.insert(param->a);
-	q.insert(param->b);
+	q.insert(20);
+	q.insert(21);
 	q.print();
 
 //--------------------------------------------------//

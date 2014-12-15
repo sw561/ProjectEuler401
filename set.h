@@ -11,7 +11,6 @@ struct Node {
 
 // This is an ordered unique list designed
 // for efficient unioning with another list
-// It keeps a record of the number of each data instance.
 class List {
 	friend class Iterator;
 	public:
@@ -27,12 +26,11 @@ class List {
 
 class Iterator{
 	friend class List;
-	friend List list_union(const List&, const List&);
 	public:
 		Iterator(const List&);
 		int get()const;
-		Node * operator++();
-		bool finished;
+		void operator++();
+		bool end()const;
 	private:
 		Node * iter;
 };
@@ -40,6 +38,7 @@ class Iterator{
 List list_union(const List&, const List&);
 
 bool compare(const List&, const int *);
+bool compare(const int *, const List&);
 
 bool compare(const List&, const List&);
 

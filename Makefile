@@ -1,19 +1,22 @@
 CC=g++
 CFLAGS= -Wall -Wextra -pedantic -O3 -ansi
-SOURCES=main.cpp set.cpp parameter.cpp
+SOURCES=main.cpp set.cpp
 OBJECTS=$(SOURCES:.cpp=.o)
 .PRECIOUS: test.o $(SOURCES:.cpp=_test.o)
 EXECUTABLE=main
 
-all: param_defi.h.auto param_decl.h.auto param_proc.h.auto $(EXECUTABLE)
+all: $(EXECUTABLE)
 
 -include $(SOURCES:.cpp=.d) test.d
 
 $(EXECUTABLE): $(OBJECTS)
 	$(CC) $(CFLAGS) $^ -o $@
 
-%_test: param_defi.h.auto param_decl.h.auto param_proc.h.auto %_test.o %.o test.o parameter.o
-	$(CC) $(CFLAGS) $*_test.o $*.o test.o parameter.o -o $@
+%_test: %_test.o %.o test.o 
+	$(CC) $(CFLAGS) $*_test.o $*.o test.o -o $@
+
+divisor_test: divisor_test.o divisor.o test.o set.o
+	$(CC) $(CFLAGS) divisor_test.o divisor.o test.o set.o -o $@
 
 %.o: %.cpp
 	$(CC) $(CFLAGS) -c $< -o $@
