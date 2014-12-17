@@ -3,8 +3,8 @@
 #include <iostream>
 
 #ifdef DEBUG
-#define IFDEBUG(x) if (debug>0) x;
-#else
+//#define IFDEBUG(x) if (debug>0) x;
+//#else
 #define IFDEBUG(x)
 #endif
 
@@ -14,13 +14,24 @@ List::List()
 	tail = 0;
 }
 
-// Copy constructor
+List::List(const int x)
+{
+	Node * q = new Node;
+	q->data = x;
+	IFDEBUG(std::cout << "Inserting first Node " << x << std::endl)
+	q->next = 0;
+	q->prev = 0;
+
+	head = q;
+	tail = q;
+}
+
 List::List(const List& L)
 {
 	head = 0;
 	tail = 0;
-	for (Iterator i = Iterator(L); !i.end(); ++i){
-		this->insert(i.get());
+	for (Node * iter = L.head; iter; iter=iter->next){
+		insert(iter->data);
 	}
 }
 
@@ -36,7 +47,7 @@ List::~List()
 
 void List::insert(const int x)
 {
-	// x is the first node
+	// x is first node
 	if (head==0){
 		Node * q = new Node;
 		q->data = x;
@@ -48,11 +59,12 @@ void List::insert(const int x)
 		tail = q;
 		return;
 	}
-
+		
 	// x is equal to first or last node
 	if (x == tail->data || x == head->data){
 		IFDEBUG(std::cout << "Node already present " << x << std::endl)
-		return;}
+		return;
+	}
 		
 	// x is larger than last node
 	if (x > tail->data){
@@ -61,8 +73,8 @@ void List::insert(const int x)
 		IFDEBUG(std::cout << "Inserting Node at the back " << x << std::endl)
 		q->prev = tail;
 		q->next = 0;
-
 		tail->next = q;
+
 		tail = q;
 		return;
 	}
@@ -71,23 +83,22 @@ void List::insert(const int x)
 	if (x < head->data){
 		Node * q = new Node;
 		q->data = x;
-		IFDEBUG(std::cout << "Inserting Node on the front " << x << std::endl)
+		IFDEBUG(std::cout << "Inserting Node at the front " << x << std::endl)
 		q->next = head;
 		q->prev = 0;
-
 		head->prev = q;
+
 		head = q;
 		return;
-		//return iter;}
 	}
 
 	// x needs to be inserted within the list
 	IFDEBUG(std::cout << "Inserting Node in the middle " << x << std::endl)
-	Iterator i = Iterator(*this);
-	while (x > i.get()) ++i;
+	Node * iter = head;
+	while (x > iter->data) iter=iter->next;
 	
 	// If x is already in the List
-	if (x == i.get()){
+	if (x == iter->data){
 		IFDEBUG(std::cout << "Node already present " << x << std::endl)
 		return;
 	}
@@ -95,116 +106,81 @@ void List::insert(const int x)
 	// Insert q in front of i.
 	Node * q = new Node;
 	q->data = x;
-	q->next = i.iter;
-	q->prev = i.iter->prev;
+	q->next = iter;
+	q->prev = iter->prev;
 	
-	i.iter->prev->next = q;
-	i.iter->prev = q;
+	iter->prev->next = q;
+	iter->prev = q;
 }
 
 void List::print()const
 {
 	std::cout << "List: ";
-	for (Iterator i = Iterator(*this); !i.end(); ++i){
-		std::cout << i.get() << " ";
+	for (Node * iter = head; iter; iter=iter->next){
+		std::cout << iter->data << " ";
 	}
 	std::cout << std::endl;
 }
 
-Iterator::Iterator(const List& L)
-{
-	iter = L.head;
-}
+bool List::empty()const { if (head==0) return true; return false;}
 
-int Iterator::get()const
+void List::add_list_union(const List& L1, const List& L2, int m)
 {
-	if (!iter) throw OutOfBounds();
-	return iter->data;
-}
+	Node * i1 = L1.head;
+	Node * i2 = L2.head;
 
-void Iterator::operator++()
-{
-	if (iter==0) return;
-	iter = iter->next;
-}
-
-bool Iterator::end()const
-{
-	if (iter==0) return true;
-	return false;
-}
-
-List list_union(const List& L1, const List& L2)
-{
-	List L = List();
-	Iterator i1 = Iterator(L1);
-	Iterator i2 = Iterator(L2);
-
-	while (!i1.end() || !i2.end()){
-		if (i1.end()){
-			L.insert(i2.get());
-			++i2;
+	while (i1 || i2){
+		if (!(i1)){
+			insert(i2->data*m);
+			i2 = i2->next;
 			continue;
 		}
-		if (i2.end()){
-			L.insert(i1.get());
-			++i1;
+		if (!(i2)){
+			insert(i1->data);
+			i1 = i1->next;
 			continue;
 		}
 
-		IFDEBUG(std::cout << i1.get() << " " << i2.get() << std::endl)
+		IFDEBUG(std::cout << i1->data << " " << i2->data*m << std::endl)
 
-		if (i1.get()==i2.get()){
-			L.insert(i1.get());
-			++i1;
-			++i2;
+		if (i1->data==i2->data*m){
+			insert(i1->data);
+			i1 = i1->next;
+			i2 = i2->next;
 		}
 
-		else if (i1.get() < i2.get()){
-			L.insert(i1.get());
-			++i1;
+		else if (i1->data < i2->data*m){
+			insert(i1->data);
+			i1 = i1->next;
 		}
-		else if (i2.get() < i1.get()){
-			L.insert(i2.get());
-			++i2;
+		else if (i2->data*m < i1->data){
+			insert(i2->data*m);
+			i2 = i2->next;
 		}
 	}
-	return L;
 }
 
-bool compare(const List& L, const int * x)
+bool List::operator==(const int * x)
 {
 	int j = 0;
-	for (Iterator i = Iterator(L); !i.end(); ++i,++j){
-		if (i.get()!=x[j]){
-			IFDEBUG(std::cout << "Element " << j+1 << " was " << i.get() << ". Expected " << x[j] << std::endl)
-			return false;}
+	for ( Node * i = head; i; i=i->next, j++){
+		if (i->data != x[j]) return false;
 	}
 	return true;
 }
 
-bool compare(const int * x, const List&L)
+bool List::operator==(const List& L)
 {
-	return compare(L,x);
-}
-
-bool compare(const List& L1, const List& L2)
-{
-	Iterator i = Iterator(L1);
-	Iterator j = Iterator(L2);
-	while (!i.end()){
-		try{ if (i.get()!=j.get()){
-			IFDEBUG(std::cout << "Element was " << i.get() << ". Expected " << j.get() << std::endl)
-			return false;}}
-		catch (OutOfBounds& e){
-			IFDEBUG(std::cout << "Lists are not the same length" << std::endl)
-			return false;}
-		++i;
-		++j;
+	Node * i = head;
+	Node * j = L.head;
+	for (; i&&j; j=j->next, i=i->next){
+		if (j->data != i->data) return false;
 	}
-
-	if (!j.end()){
-		IFDEBUG(std::cout << "Lists are not the same length" << std::endl)
-		return false;}
+	// The lists are not of the same length
+	if (i||j) return false;
 	return true;
 }
+
+bool List::operator!=(const int * x) {return !((*this)==x);}
+
+bool List::operator!=(const List& L) {return !((*this)==L);}

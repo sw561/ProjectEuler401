@@ -3,7 +3,10 @@
 
 #include "set.h"
 
-List divisor(int x);
+void divisor(int x, List * cache);
+
+List simple(int x);
+
 int sigma2(const List&);
 
 #endif
