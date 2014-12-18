@@ -1,30 +1,19 @@
 #include "divisor.h"
 #include "set.h"
 #include "test.h"
+#include <iostream>
 
 unsigned short int debug = 0;
 
-bool test1()
+bool divisor()
 {
-	List cache[1000] = {List()};
-	divisor(360,cache);
-	if (debug>0) cache[360].print();
-
-	List L2 = simple(360);
-	if (debug>0) L2.print();
-	
-	return cache[360]==simple(360);
-}
-
-bool test2()
-{
-	List cache[1000] = {List()};
-
-	for (int i=1; i<1000; i++)
-	{
-		divisor(i,cache);
-		if (cache[i]!=simple(i)){
-			if (debug>0) std::cout << "Failure for " << i << std::endl;
+	for (int i=1; i<=100; i++){
+		List L = divisor(i);
+		List K = simple(i);
+		if (L!=K){
+			std::cout << i << std::endl;
+			L.print();
+			K.print();
 			return false;
 		}
 	}
@@ -35,7 +24,14 @@ int main()
 {
 	TestSuite s = TestSuite(__FILE__);
 
-	s.test("360",&test1);
-	s.test("All",&test2);
+	s.test("divisor",&divisor);
 
+	s.test("6",(int)divisor(6).sigma2(),50);
+
+	s.test("SIGMA2 1",&SIGMA2<1>,1.);
+	s.test("SIGMA2 2",&SIGMA2<2>,6.);
+	s.test("SIGMA2 3",&SIGMA2<3>,16.);
+	s.test("SIGMA2 4",&SIGMA2<4>,37.);
+	s.test("SIGMA2 5",&SIGMA2<5>,63.);
+	s.test("SIGMA2 6",&SIGMA2<6>,113.);
 }

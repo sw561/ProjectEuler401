@@ -14,24 +14,12 @@ List::List()
 	tail = 0;
 }
 
-List::List(const int x)
-{
-	Node * q = new Node;
-	q->data = x;
-	IFDEBUG(std::cout << "Inserting first Node " << x << std::endl)
-	q->next = 0;
-	q->prev = 0;
-
-	head = q;
-	tail = q;
-}
-
 List::List(const List& L)
 {
 	head = 0;
 	tail = 0;
 	for (Node * iter = L.head; iter; iter=iter->next){
-		insert(iter->data);
+		insert(iter->data,iter->data2);
 	}
 }
 
@@ -45,12 +33,18 @@ List::~List()
 	}
 }
 
-void List::insert(const int x)
+void List::insert(const long unsigned int x)
+{
+	insert(x,x*x);
+}
+
+void List::insert(const long unsigned int x, const long unsigned int x2)
 {
 	// x is first node
 	if (head==0){
 		Node * q = new Node;
 		q->data = x;
+		q->data2 = x2;
 		IFDEBUG(std::cout << "Inserting first Node " << x << std::endl)
 		q->next = 0;
 		q->prev = 0;
@@ -70,6 +64,7 @@ void List::insert(const int x)
 	if (x > tail->data){
 		Node * q = new Node;
 		q->data = x;
+		q->data2 = x2;
 		IFDEBUG(std::cout << "Inserting Node at the back " << x << std::endl)
 		q->prev = tail;
 		q->next = 0;
@@ -83,6 +78,7 @@ void List::insert(const int x)
 	if (x < head->data){
 		Node * q = new Node;
 		q->data = x;
+		q->data2 = x2;
 		IFDEBUG(std::cout << "Inserting Node at the front " << x << std::endl)
 		q->next = head;
 		q->prev = 0;
@@ -106,6 +102,7 @@ void List::insert(const int x)
 	// Insert q in front of i.
 	Node * q = new Node;
 	q->data = x;
+	q->data2 = x2;
 	q->next = iter;
 	q->prev = iter->prev;
 	
@@ -120,23 +117,27 @@ void List::print()const
 		std::cout << iter->data << " ";
 	}
 	std::cout << std::endl;
+	for (Node * iter = head; iter; iter=iter->next){
+		std::cout << iter->data2 << " ";
+	}
+	std::cout << std::endl;
 }
 
-bool List::empty()const { if (head==0) return true; return false;}
-
-void List::add_list_union(const List& L1, const List& L2, int m)
+void List::add_list_union(const List& L, long unsigned int m)
 {
-	Node * i1 = L1.head;
-	Node * i2 = L2.head;
+	long unsigned int m2 = m*m;
+
+	Node * i1 = L.head;
+	Node * i2 = L.head;
 
 	while (i1 || i2){
 		if (!(i1)){
-			insert(i2->data*m);
+			insert(i2->data*m,i2->data2*m2);
 			i2 = i2->next;
 			continue;
 		}
 		if (!(i2)){
-			insert(i1->data);
+			insert(i1->data,i1->data2);
 			i1 = i1->next;
 			continue;
 		}
@@ -144,26 +145,35 @@ void List::add_list_union(const List& L1, const List& L2, int m)
 		IFDEBUG(std::cout << i1->data << " " << i2->data*m << std::endl)
 
 		if (i1->data==i2->data*m){
-			insert(i1->data);
+			insert(i1->data,i1->data2);
 			i1 = i1->next;
 			i2 = i2->next;
 		}
 
 		else if (i1->data < i2->data*m){
-			insert(i1->data);
+			insert(i1->data,i1->data2);
 			i1 = i1->next;
 		}
 		else if (i2->data*m < i1->data){
-			insert(i2->data*m);
+			insert(i2->data*m,i2->data2*m2);
 			i2 = i2->next;
 		}
 	}
 }
 
-bool List::operator==(const int * x)
+long unsigned int List::sigma2()const
+{
+	long unsigned int s = 0;
+	for (Node * iter = head; iter; iter=iter->next){
+		s += iter->data2;
+	}
+	return s;
+}
+
+bool List::operator==(const unsigned int * x)
 {
 	int j = 0;
-	for ( Node * i = head; i; i=i->next, j++){
+	for (Node * i = head; i; i=i->next, j++){
 		if (i->data != x[j]) return false;
 	}
 	return true;
@@ -181,6 +191,6 @@ bool List::operator==(const List& L)
 	return true;
 }
 
-bool List::operator!=(const int * x) {return !((*this)==x);}
+bool List::operator!=(const unsigned int * x) {return !((*this)==x);}
 
 bool List::operator!=(const List& L) {return !((*this)==L);}

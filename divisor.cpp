@@ -1,32 +1,7 @@
 #include "divisor.h"
+#include "debug.h"
 #include "cmath"
 #include <iostream>
-#include "debug.h"
-
-#define IFDEBUG(x) if (debug>0) x;
-
-void divisor(int x, List * cache)
-{
-	if (!(cache[x].empty())){
-		IFDEBUG(std::cout << "Returning from cache." << std::endl)
-		return;
-	}
-
-	for (int i=2; i<=sqrt(x); i++){
-		if (x%i == 0){
-			int a = x/i;
-			IFDEBUG(std::cout << "Doing a union" << std::endl)
-			IFDEBUG(cache[a].print())
-			if (cache[a].empty()) divisor(a,cache);
-			cache[x].add_list_union(cache[a],cache[a],i);
-			return;
-		}
-	}
-	// No non-trivial divisors found
-	IFDEBUG(std::cout << "No non-trivial divisors." << std::endl)
-	cache[x].insert(1);
-	cache[x].insert(x);
-}
 
 List simple(int x)
 {
@@ -41,3 +16,20 @@ List simple(int x)
 	if (x==1) q.insert(1);
 	return q;
 }
+
+List divisor(const unsigned long int x)
+{
+	List L = List();
+	
+	for (unsigned long int i = 2; i<=sqrt(x); i++){
+		if (x%i == 0){
+			unsigned long int a = x/i;
+			L.add_list_union(divisor(a),i);
+			return L;
+		}
+	}
+	L.insert(1);
+	L.insert(x);
+	return L;
+}
+

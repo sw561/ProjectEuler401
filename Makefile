@@ -1,6 +1,6 @@
 CC=g++
 CFLAGS= -Wall -Wextra -pedantic -O3 -ansi
-SOURCES=main.cpp set.cpp
+SOURCES=main.cpp set.cpp divisor.cpp
 OBJECTS=$(SOURCES:.cpp=.o)
 .PRECIOUS: test.o $(SOURCES:.cpp=_test.o)
 EXECUTABLE=main
