@@ -8,6 +8,7 @@ main
 *out.txt
 *.png
 *.swp
+nohup.out
 parameter.*
 program.py
 test.cpp

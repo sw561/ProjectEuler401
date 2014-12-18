@@ -11,6 +11,6 @@ d = dict()
 for i in range(10):
 	d["n"]=i
 	
-	p = Program("Data",d,debug,True)
+	p = Program("Data",d,debug,False)
 	print p.data()
 
