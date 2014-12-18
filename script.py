@@ -8,5 +8,9 @@ else: debug = 0
 
 d = dict()
 
-p = Program("Data",d,debug,True)
+for i in range(10):
+	d["n"]=i
+	
+	p = Program("Data",d,debug,True)
+	print p.data()
 

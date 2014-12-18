@@ -33,3 +33,11 @@ List divisor(const unsigned long int x)
 	return L;
 }
 
+double SIGMA2(const unsigned long int N)
+{
+	double s = 0;
+	for (unsigned long int i=1; i<=N; i++){
+		s += divisor(i).sigma2();
+	}
+	return s;
+}
