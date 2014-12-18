@@ -3,6 +3,14 @@
 #include "cmath"
 #include <iostream>
 
+#ifdef DEBUG
+//#define IFDEBUG(x) if (debug>0) x;
+//#else
+#define IFDEBUG(x)
+#endif
+
+#define CACHE_SIZE 15000000
+
 List simple(int x)
 {
 	List q = List();
@@ -19,8 +27,27 @@ List simple(int x)
 
 List divisor(const unsigned long int x)
 {
+	static List cache[CACHE_SIZE] = {List()};
+	if (x<CACHE_SIZE){
+		unsigned long int index = x;
+		
+		if (!cache[index].empty()){
+			IFDEBUG(std::cout << "Returning from cache " << x << std::endl)
+			return cache[index];
+		}
+		for (unsigned long int i = 2; i<=sqrt(x); i++){
+			if (x%i == 0){
+				unsigned long int a = x/i;
+				cache[index].add_list_union(divisor(a),i);
+				return cache[index];
+			}
+		}
+		cache[index].insert(1);
+		cache[index].insert(x);
+		return cache[index];
+	}
+
 	List L = List();
-	
 	for (unsigned long int i = 2; i<=sqrt(x); i++){
 		if (x%i == 0){
 			unsigned long int a = x/i;

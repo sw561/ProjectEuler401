@@ -10,12 +10,10 @@ bool divisor()
 	for (int i=1; i<=100; i++){
 		List L = divisor(i);
 		List K = simple(i);
-		if (L!=K){
-			std::cout << i << std::endl;
+		if (debug>0){
 			L.print();
-			K.print();
-			return false;
-		}
+			K.print();}
+		if (L!=K){ return false;}
 	}
 	return true;
 }

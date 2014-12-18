@@ -19,6 +19,7 @@ class List {
 		void insert(const unsigned long int);
 		void insert(const unsigned long int, const unsigned long int);
 		void print()const;
+		bool empty()const;
 
 		// Using the same list
 		void add_list_union(const List& L1, unsigned long int m);

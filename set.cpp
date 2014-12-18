@@ -33,6 +33,13 @@ List::~List()
 	}
 }
 
+bool List::empty()const
+{
+	Node * iter = head;
+	if (iter) return false;
+	return true;
+}
+
 void List::insert(const long unsigned int x)
 {
 	insert(x,x*x);
