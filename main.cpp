@@ -23,10 +23,6 @@ int main(int argc, char* argv[])
 
 	// Parameter file
 	if (argc>=4) Parameter::inst(argv[3]);
-	
-	// Debug variable
-	if (argc>=3) std::istringstream(argv[2]) >> debug;
-	else debug = 0;
 //--------------------------------------------------//
 	
 	// Your program:
